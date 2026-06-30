@@ -1,3 +1,5 @@
+"""in this file we define our pydantic models """
+
 from pydantic import BaseModel,EmailStr
 
 class EmployeeBase(BaseModel):
