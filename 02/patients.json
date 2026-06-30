@@ -1,0 +1,82 @@
+{
+    "P001": {
+        "name": "John Doe",
+        "verdict": "Healthy",
+        "gender": "Male",
+        "age": 35,
+        "bmi": 24.2,
+        "weight_kg": 78,
+        "height_cm": 179,
+        "city": "Bucharest"
+    },
+    "P002": {
+        "name": "Jane Smith",
+        "verdict": "Overweight",
+        "gender": "Female",
+        "age": 42,
+        "bmi": 28.5,
+        "weight_kg": 82,
+        "height_cm": 170,
+        "city": "Cluj-Napoca"
+    },
+    "P003": {
+        "name": "Michael Brown",
+        "verdict": "Obese",
+        "gender": "Male",
+        "age": 51,
+        "bmi": 32.1,
+        "weight_kg": 98,
+        "height_cm": 175,
+        "city": "Timisoara"
+    },
+    "P004": {
+        "name": "Emily Davis",
+        "verdict": "Underweight",
+        "gender": "Female",
+        "age": 27,
+        "bmi": 17.8,
+        "weight_kg": 48,
+        "height_cm": 164,
+        "city": "Iasi"
+    },
+    "P005": {
+        "name": "yummae",
+        "city": "kahndesh",
+        "gender": "male",
+        "age": 16,
+        "height": 1.9,
+        "weight": 56.0,
+        "bmi": 15.51,
+        "verdict": "Underweight"
+    },
+    "P007": {
+        "name": "James Anderson",
+        "verdict": "Healthy",
+        "gender": "Male",
+        "age": 45,
+        "bmi": 24.8,
+        "weight_kg": 80,
+        "height_cm": 180,
+        "city": "Sibiu"
+    },
+    "P008": {
+        "name": "Olivia Taylor",
+        "verdict": "Healthy",
+        "gender": "Female",
+        "age": 33,
+        "bmi": 22.6,
+        "weight_kg": 61,
+        "height_cm": 164,
+        "city": "Oradea"
+    },
+    "P009": {
+        "name": "sanuu",
+        "city": "New delhi",
+        "gender": "Female",
+        "age": 67,
+        "height": 5.9,
+        "weight": 160.5,
+        "bmi": 4.61,
+        "verdict": "Underweight"
+    }
+}
