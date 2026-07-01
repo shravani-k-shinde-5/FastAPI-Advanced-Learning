@@ -4,3 +4,74 @@ In simple terms:
 
 Before serialization: The model exists as an in-memory object (weights, architecture, configuration, optimizer state, etc.).
 After serialization: The model is stored as a file (or byte stream) that can be reused later. 
+
+
+COMMON TOOLS
+
+1. Pickle
+
+Best for: General Python objects and simple ML models.
+
+Save Model
+import pickle
+from sklearn.linear_model import LogisticRegression
+
+model = LogisticRegression()
+# model.fit(X_train, y_train)
+
+with open("model.pkl", "wb") as file:
+    pickle.dump(model, file)
+
+Load Model
+import pickle
+
+with open("model.pkl", "rb") as file:
+    loaded_model = pickle.load(file)
+
+prediction = loaded_model.predict(X_test)
+
+
+2. Joblib
+
+Best for: Scikit-learn models with large NumPy arrays.
+
+Save Model
+from joblib import dump
+
+dump(model, "model.joblib")
+Load Model
+from joblib import load
+
+loaded_model = load("model.joblib")
+
+prediction = loaded_model.predict(X_test)
+
+
+3. TensorFlow / Keras
+Save Entire Model
+from tensorflow import keras
+
+# model.fit(...)
+
+model.save("my_model.keras")
+Load Model
+from tensorflow import keras
+
+loaded_model = keras.models.load_model("my_model.keras")
+
+prediction = loaded_model.predict(X_test)
+
+
+4. PyTorch
+Save Model Weights
+import torch
+
+torch.save(model.state_dict(), "model.pth")
+Load Model Weights
+import torch
+
+model = MyModel()      # Define the model architecture
+model.load_state_dict(torch.load("model.pth"))
+model.eval()
+
+prediction = model(X_test)
