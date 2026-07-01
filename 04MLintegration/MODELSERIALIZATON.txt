@@ -1,0 +1,6 @@
+Model serialization is the process of converting a machine learning model into a format that can be saved to storage or transmitted over a network, and later loaded back into memory to make predictions or continue training.
+
+In simple terms:
+
+Before serialization: The model exists as an in-memory object (weights, architecture, configuration, optimizer state, etc.).
+After serialization: The model is stored as a file (or byte stream) that can be reused later. 
