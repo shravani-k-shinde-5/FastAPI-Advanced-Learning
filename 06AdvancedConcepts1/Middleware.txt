@@ -39,14 +39,20 @@ Back to Middleware
 | Calls `await call_next(request)` to continue processing | Returns the response (JSON, HTML, file, etc.)                  |
 
 
-| Middleware                | Purpose                                                                                                                 |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `CORSMiddleware`          | Controls which browser origins are allowed to access your API.                                                          |
-| `GZipMiddleware`          | Compresses large responses before sending them to the client.                                                           |
-| `HTTPSRedirectMiddleware` | Redirects all HTTP requests to HTTPS for secure communication.                                                          |
-| `TrustedHostMiddleware`   | Allows requests only from trusted hostnames, helping prevent Host header attacks.                                       |
-| `SessionMiddleware`       | Adds support for server-side sessions using signed cookies to store user session data.                                  |
-| `BaseHTTPMiddleware`      | Lets you create your own custom middleware for tasks like logging, authentication, or modifying requests and responses. |
+ own custom middleware for tasks like logging, authentication, or modifying requests and responses. |
+
+
+##BUILT IN MIDDLEWARE
+CORSMiddleware → Who can access my API?
+GZipMiddleware → Make responses smaller and faster.
+HTTPSRedirectMiddleware → Force secure (HTTPS) connections.
+TrustedHostMiddleware → Accept requests only from trusted domains.
+SessionMiddleware → Remember users between requests.
+
+
+
+BaseHTTPMiddleware → Write your own middleware logic.
+
 
 
 from fastapi import FastAPI
