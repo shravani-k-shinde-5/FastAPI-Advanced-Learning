@@ -1,0 +1,85 @@
+What is Middleware in FastAPI?
+
+Middleware is a function that wraps every request and every response.
+
+It runs:
+
+Before the request reaches your route handler.
+After the route handler returns a response.
+
+This is an important difference: in FastAPI, middleware can execute code both before and after the route handler.
+
+
+
+
+ Request
+   │
+   ▼
+Middleware
+   │
+   ▼
+await call_next(request)
+   │
+   ▼
+Route Handler
+   │
+   ▼
+Response
+   │
+   ▼
+Back to Middleware
+
+
+
+| Middleware                                              | Route Handler                                                  |
+| ------------------------------------------------------- | -------------------------------------------------------------- |
+| Runs before every request reaches the route handler     | Runs only when its specific endpoint is requested              |
+| Can also run after the response is created              | Creates the response for that endpoint                         |
+| Used for logging, authentication, timing, CORS, etc.    | Contains the business logic (fetch users, create orders, etc.) |
+| Calls `await call_next(request)` to continue processing | Returns the response (JSON, HTML, file, etc.)                  |
+
+
+| Middleware                | Purpose                                                                                                                 |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `CORSMiddleware`          | Controls which browser origins are allowed to access your API.                                                          |
+| `GZipMiddleware`          | Compresses large responses before sending them to the client.                                                           |
+| `HTTPSRedirectMiddleware` | Redirects all HTTP requests to HTTPS for secure communication.                                                          |
+| `TrustedHostMiddleware`   | Allows requests only from trusted hostnames, helping prevent Host header attacks.                                       |
+| `SessionMiddleware`       | Adds support for server-side sessions using signed cookies to store user session data.                                  |
+| `BaseHTTPMiddleware`      | Lets you create your own custom middleware for tasks like logging, authentication, or modifying requests and responses. |
+
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.gzip import GZipMiddleware
+from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
+
+app = FastAPI()
+
+# Redirect HTTP → HTTPS
+app.add_middleware(
+    HTTPSRedirectMiddleware
+)
+
+# Compress large responses
+app.add_middleware(
+    GZipMiddleware,
+    minimum_size=1000
+)
+
+# Allow requests from trusted frontend origins
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "https://example.com",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.get("/")
+async def home():
+    return {"message": "Hello World"}
