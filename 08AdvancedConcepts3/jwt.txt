@@ -1,0 +1,316 @@
+JWT (JSON Web Token) – Conceptual Explanation
+
+Think of JWT as a digital identity card issued by the server.
+
+When you log in, instead of remembering you in server memory, the server gives you a signed token. You present this token with every future request.
+
+Why do we need JWT?
+
+Suppose you have a banking application.
+
+First request
+POST /login
+
+Username: Alice
+Password: ********
+
+Server verifies your credentials.
+
+Now the server needs a way to know that future requests are from Alice.
+
+There are two approaches:
+
+Approach 1: Session Authentication
+Login
+
+↓
+
+Server creates Session ID
+
+↓
+
+Stores Session ID in database/memory
+
+↓
+
+Returns Session ID to browser
+
+↓
+
+Browser sends Session ID every request
+
+↓
+
+Server looks up session
+
+The server must remember every logged-in user.
+
+Approach 2: JWT Authentication
+Login
+
+↓
+
+Server creates JWT
+
+↓
+
+Returns JWT
+
+↓
+
+Client stores JWT
+
+↓
+
+Client sends JWT every request
+
+↓
+
+Server verifies JWT
+
+↓
+
+Request accepted
+
+The server does not need to remember users between requests.
+
+This is called stateless authentication.
+
+What does Stateless mean?
+
+Stateless means
+
+Every request contains all the information needed for authentication.
+
+Example:
+
+GET /profile
+
+Authorization: Bearer eyJhbGc...
+
+The server doesn't ask
+
+"Who is this?"
+
+The JWT already answers that question.
+
+What is inside a JWT?
+
+A JWT has three parts.
+
+Header
+.
+Payload
+.
+Signature
+
+Example:
+
+xxxxx.yyyyy.zzzzz
+1. Header
+
+Contains metadata.
+
+Example
+
+{
+  "alg": "HS256",
+  "typ": "JWT"
+}
+
+Meaning
+
+Algorithm = HS256
+Type = JWT
+2. Payload
+
+Contains claims (information).
+
+Example
+
+{
+    "sub": "alice",
+    "role": "admin",
+    "exp": 1760000000
+}
+
+Meaning
+
+subject = alice
+role = admin
+expiration time
+
+Important: The payload is encoded, not encrypted. Anyone with the token can decode and read it, so don't store passwords or other secrets in it.
+
+3. Signature
+
+The most important part.
+
+The server signs the token using a secret key.
+
+Conceptually:
+
+Signature
+
+=
+
+Hash(
+    Header
+    +
+    Payload
+    +
+    Secret Key
+)
+
+Only the server knows the secret key.
+
+Why is the signature important?
+
+Suppose the payload says
+
+{
+    "role":"user"
+}
+
+A hacker changes it to
+
+{
+    "role":"admin"
+}
+
+The payload changed.
+
+The signature no longer matches.
+
+Server immediately rejects the token.
+
+So although the payload is visible, it cannot be modified without detection.
+
+JWT Authentication Flow
+Step 1
+
+User logs in.
+
+POST /login
+
+↓
+
+Username and password are sent.
+
+Step 2
+
+Server verifies credentials.
+
+Username ✔
+
+Password ✔
+Step 3
+
+Server creates JWT.
+
+Example payload
+
+{
+    "sub":"alice",
+    "exp":"Tomorrow"
+}
+Step 4
+
+Server signs JWT.
+
+Header
+
++
+
+Payload
+
++
+
+Secret Key
+
+↓
+
+JWT
+Step 5
+
+Server sends JWT to client.
+
+Client
+
+↓
+
+JWT
+
+This token may be returned in the response body or stored in a secure cookie, depending on the application's design.
+
+Step 6
+
+Client stores JWT.
+
+Could be
+
+Browser
+Mobile App
+Desktop App
+Step 7
+
+Every future request
+
+GET /orders
+
+Authorization: Bearer <JWT>
+Step 8
+
+Server verifies JWT.
+
+Checks
+
+Signature
+Expiration
+Validity
+
+If valid
+
+↓
+
+Extract user information
+
+↓
+
+Execute request
+
+How FastAPI uses JWT
+
+Imagine this code
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+This simply extracts
+
+Authorization: Bearer eyJhbGc...
+
+into
+
+token = "eyJhbGc..."
+
+Next
+
+def get_current_user(token=Depends(oauth2_scheme)):
+
+receives that token.
+
+Then
+
+payload = jwt.decode(token, SECRET_KEY)
+
+verifies it.
+
+If successful
+
+payload = {
+    "sub":"alice"
+}
+
+Now FastAPI knows
+
+Current user = Alice.
