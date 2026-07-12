@@ -1,0 +1,122 @@
+Dependency Injection (DI) in FastAPI is a way to provide objects or services that your endpoint needs without creating them inside the endpoint itself. Instead of your route function constructing dependencies (like a database connection, current user, or configuration), FastAPI creates and injects them automatically.
+
+Think of it like this:
+
+Without DI: The endpoint is responsible for creating everything it needs.
+With DI: The endpoint simply declares what it needs, and FastAPI provides it.
+Without Dependency Injection
+from fastapi import FastAPI
+
+app = FastAPI()
+
+class Database:
+    def get_users(self):
+        return ["Alice", "Bob"]
+
+@app.get("/users")
+def get_users():
+    db = Database()  # Endpoint creates the dependency
+    return db.get_users()
+
+Problems:
+
+Harder to test.
+Tightly coupled to Database.
+Every endpoint has to create its own dependencies.
+With Dependency Injection
+
+FastAPI uses the Depends() function.
+
+from fastapi import FastAPI, Depends
+
+app = FastAPI()
+
+class Database:
+    def get_users(self):
+        return ["Alice", "Bob"]
+
+def get_db():
+    return Database()
+
+@app.get("/users")
+def get_users(db: Database = Depends(get_db)):
+    return db.get_users()
+
+Here's what happens:
+
+A request arrives.
+FastAPI sees Depends(get_db).
+It calls get_db().
+The returned Database object is passed into db.
+
+Your endpoint never creates the database object itself.
+
+Real-World Example: Database Session
+
+This is one of the most common uses.
+
+from sqlalchemy.orm import Session
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+@app.get("/users")
+def get_users(db: Session = Depends(get_db)):
+    return db.query(User).all()
+
+Using yield lets FastAPI:
+
+Create the session before the request.
+Automatically close it after the request.
+Authentication Example
+
+Instead of checking authentication in every route:
+
+def get_current_user(token: str = Depends(oauth2_scheme)):
+    # validate token
+    return user
+
+@app.get("/profile")
+def profile(user = Depends(get_current_user)):
+    return user
+
+Every endpoint that needs authentication simply asks for the current user.
+
+Dependency Chains
+
+Dependencies can depend on other dependencies.
+
+def get_settings():
+    return Settings()
+
+def get_db(settings = Depends(get_settings)):
+    return Database(settings)
+
+@app.get("/")
+def home(db = Depends(get_db)):
+    return {"status": "OK"}
+
+FastAPI resolves them automatically:
+
+Request
+   │
+   ▼
+get_settings()
+   │
+   ▼
+get_db(settings)
+   │
+   ▼
+Endpoint(db)
+Why Use Dependency Injection?
+
+It makes your code:
+
+Reusable: One dependency can be shared by many routes.
+Testable: You can replace dependencies with mocks during testing.
+Modular: Business logic is separated from resource creation.
+Maintainable: Changes to a dependency are made in one place.
